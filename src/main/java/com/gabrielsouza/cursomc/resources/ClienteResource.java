@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.gabrielsouza.cursomc.domain.Categoria;
 import com.gabrielsouza.cursomc.domain.Cliente;
 import com.gabrielsouza.cursomc.domain.Cliente;
+import com.gabrielsouza.cursomc.dto.CategoriaDTO;
 import com.gabrielsouza.cursomc.dto.ClienteDTO;
+import com.gabrielsouza.cursomc.dto.ClienteNewDTO;
 import com.gabrielsouza.cursomc.services.ClienteService;
 
 @RestController
@@ -36,6 +39,16 @@ public class ClienteResource {
 		Cliente obj =  service.find(id);
 		
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto){
+		
+		Cliente  obj = service.fromDTO(objDto);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		
+		return ResponseEntity.created(uri).build();
 	}
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.PUT)
